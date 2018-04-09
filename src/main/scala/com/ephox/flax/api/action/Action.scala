@@ -6,6 +6,7 @@ import Action._
 import api.action.Log._
 import api.elem.Driver
 import PPrint._
+import com.ephox.flax.internal.{ActionBase, RT, WT}
 import org.openqa.selenium.support.ui.UnexpectedTagNameException
 
 import scala.util.control.NonFatal
