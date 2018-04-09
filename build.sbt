@@ -53,7 +53,7 @@ libraryDependencies ++= Seq(
   , "org.seleniumhq.selenium" % "selenium-server" % seleniumVersion
   , "org.seleniumhq.selenium" % "selenium-firefox-driver" % seleniumVersion
 
-  , "com.github.detro.ghostdriver" % "phantomjsdriver" % "1.1.0"
+  , "com.codeborne" % "phantomjsdriver" % "1.4.4"
 
   , "org.typelevel" %% "scalaz-specs2" % "0.5.2" % Test
 ).map(_.withSources)
