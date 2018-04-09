@@ -16,7 +16,7 @@ class AWebTest extends Specification with FlaxSpec {
     for {
       _ <- get("https://github.com/ephox/flax/")
       _ <- clickBy(linkText("geckodriver"))
-      _ <- nested("silly navigations", back *> forward *> back)
+      _ <- nested("silly navigations", back *> forward *> back *> refresh)
       _ <- clickBy(partialLinkText("ExampleTestBase"))
     } yield ()
   }
