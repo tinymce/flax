@@ -12,6 +12,7 @@ import Selekt.selekt
 import internal.JuListUtils._
 import internal.Waiter
 import org.openqa.selenium.By
+import org.openqa.selenium.WebDriver.Navigation
 import org.openqa.selenium.support.ui.Select
 import scalaz.effect.IO
 import scalaz._
@@ -213,4 +214,16 @@ object FlaxActions {
   def close: Action[Unit] =
     fromSideEffectWithLog("Closing browser", _.d.close())
 
+  def back: Action[Unit] =
+    navigate("Back", _.back())
+
+  def forward: Action[Unit] =
+    navigate("Forward", _.forward())
+
+  def refresh: Action[Unit] =
+    navigate("Refresh", _.refresh())
+
+  private def navigate(log: String, f: Navigation => Unit): Action[Unit] = {
+    fromSideEffectWithLog(log, d => f(d.d.navigate()))
+  }
 }
