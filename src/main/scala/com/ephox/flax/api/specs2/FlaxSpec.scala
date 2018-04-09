@@ -42,9 +42,9 @@ trait FlaxSpec extends AfterAll with BeforeEach {
 
   def beforeAllAction: Action[Unit] = noop
 
-  def afterAllAction: Action[Unit] = noop
+  def afterAllAction: Action[Unit] = close
 
-  def beforeEachAction: Action[Unit] = close
+  def beforeEachAction: Action[Unit] = noop
 
   override def afterAll(): Unit =
     FlaxSpec.unload(afterAllAction)
