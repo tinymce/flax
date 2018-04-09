@@ -4,7 +4,7 @@ package api.action
 import api.elem.Elem
 
 import org.openqa.selenium.By
-import scalaz.\/, \/._
+import scalaz.{Equal, Show, \/}, \/._
 
 sealed trait Err
 
@@ -30,6 +30,11 @@ object Err {
   def kersploded(e: Throwable): Err = Kersploded(e)
 
   def other(s: String): Err = Other(s)
+
+
+  implicit def equalErr: Equal[Err] = Equal.equalA
+
+  implicit def showErr: Show[Err] = Show.showA
 }
 
 object ErrOrElem {
