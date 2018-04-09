@@ -174,8 +174,14 @@ object Action {
   def fromDiowe[A](fn: Driver => IO[Writer[Log[String], Err ∨ A]]): Action[A] =
     fromDiope(d => fn(d).map(_.run))
 
+  def fromDiowe_[A](fn: => IO[Writer[Log[String], Err ∨ A]]): Action[A] =
+    fromDiowe(_ => fn)
+
   def fromDiope[A](f: Driver => IO[(Log[String], Err ∨ A)]): Action[A] =
     Action(EitherT[WT, Err, A](WriterT[RT, Log[String], Err ∨ A](ReaderT.apply(f))))
+
+  def fromDiope_[A](f: IO[(Log[String], Err ∨ A)]): Action[A] =
+    fromDiope(_ => f)
 
   /** Nest an action or set of actions, providing a log message for the set. */
   def nested[A](message: String, action: Action[A]): Action[A] =

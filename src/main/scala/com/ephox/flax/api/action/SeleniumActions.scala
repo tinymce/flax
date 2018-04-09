@@ -16,7 +16,7 @@ import org.openqa.selenium.support.ui.Select
 import scalaz.effect.IO
 import scalaz._
 
-trait SeleniumActions {
+object SeleniumActions {
 
   private def findElement(d: Driver, by: By): IO[Option[Elem]] =
     IO(headOption(d.d.findElements(by)) map (we => elem(we, by)))
@@ -211,5 +211,3 @@ trait SeleniumActions {
     findAnd(deselect, by)
 
 }
-
-object SeleniumActions extends SeleniumActions

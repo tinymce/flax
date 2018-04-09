@@ -36,12 +36,7 @@ import org.specs2.specification.{AfterAll, BeforeEach}
   *
   * This is mainly an example - you may wish to integrate into specs2 differently.
   */
-trait Flax
-  extends AfterAll
-    with SeleniumActions
-    with Assertions
-    with SeleniumAssertions
-    with BeforeEach {
+trait Flax extends AfterAll with BeforeEach {
 
   def curBrowser: Browser
 

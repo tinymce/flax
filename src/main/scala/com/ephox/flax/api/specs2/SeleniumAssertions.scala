@@ -1,18 +1,46 @@
 package com.ephox.flax
 package api.specs2
 
-import com.ephox.flax.api.action.Action
+import com.ephox.flax.api.action.Log.single
+import com.ephox.flax.api.action.{Action, Err, Log}
 import com.ephox.flax.api.action.SeleniumActions._
 import com.ephox.flax.api.elem.Elem
-import com.ephox.flax.api.specs2.Assertions._
 import org.openqa.selenium.By
+import org.specs2.execute.Result
 
-trait SeleniumAssertions {
+import scalaz.{Writer, \/}
+import scalaz.effect.IO
+import org.specs2.matcher.MatchResult
+import org.specs2.matcher.MustMatchers._
+
+object SeleniumAssertions {
+
+  def assert[A](matchResult: => MatchResult[A]): Action[Unit] =
+    Action.fromDiowe { _ =>
+      IO {
+        val result: Result = matchResult.toResult
+
+        val resultS: Log[String] = single[String](result.toString)
+
+        val e = if (result.isFailure)
+          \/.left[Err, Unit](Err.assertionFailed(result.message))
+        else
+          \/.right[Err, Unit](())
+
+        Writer(resultS, e)
+      }
+    }
+
+  def assertTrue(b: => Boolean): Action[Unit] =
+    assert(b must beTrue)
+
+  def assertEquals[T](a: => T, b: => T): Action[Unit] =
+    assert(a must_=== b)
 
   def assertAction(action: Action[Boolean]): Action[Unit] = for {
     b <- action
     _ <- assertTrue(b)
-  } yield()
+  } yield ()
 
 
   def assertSelected(e: Elem): Action[Unit] =
@@ -60,7 +88,5 @@ trait SeleniumAssertions {
 
   def assertExistsNow(by: By): Action[Unit] =
     assertAction(exists(by))
-
 }
 
-object SeleniumAssertions extends SeleniumAssertions
