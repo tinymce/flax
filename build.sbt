@@ -32,7 +32,7 @@ scalacOptions in Compile := Seq(
 parallelExecution in Test := false
 fork in test := false
 
-val scalazVersion = "7.3.0-M21"
+val scalazVersion = "7.2.20"
 val specs2Version = "4.0.3"
 val seleniumVersion = "3.11.0"
 
