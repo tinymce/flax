@@ -5,7 +5,7 @@ name := "flax"
 
 organization := "com.ephox"
 
-licenses := Seq(("All Rights Reserved", new URL("https://www.ephox/com/legal")))
+licenses := Seq(("Apache License, Version 2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0")))
 
 homepage := Some(new URL("https://www.ephox.com/"))
 
