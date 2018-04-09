@@ -21,11 +21,11 @@ Getting Started
 Assuming you're using sbt: 
 
 1. Download any browser drivers you need and ensure they're on your path. e.g.
-   - geckodriver - [https://github.com/mozilla/geckodriver/releases]
+   - [geckodriver](https://github.com/mozilla/geckodriver/releases)
 2. Add flax to your build.sbt file.
 3. Disable parallel execution in your build settings
    `parallelExecution := false`
-4. Create a test base class. e.g. [src/it/scala/com/ephox/flax/it/ExampleTestBase.scala]
+4. Create a test base class. e.g. [ExampleTestBase.scala](src/it/scala/com/ephox/flax/it/ExampleTestBase.scala)
 
 5. Write tests
    `TODO`
