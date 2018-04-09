@@ -25,7 +25,7 @@ class NestingTest extends Specification with ScalaCheck with ScalazMatchers {
     }
 
     "nested action with two messages" in prop { (a: String, b: String, c: String) =>
-      runAndGetLogs(nested(a, logOnly(b) >> logOnly(c))) must equal(singleNode(Node(a, Log.fromDList(DList(b, c)))))
+      runAndGetLogs(nested(a, log(b) >> log(c))) must equal(singleNode(Node(a, Log.fromDList(DList(b, c)))))
     }
   }
 }

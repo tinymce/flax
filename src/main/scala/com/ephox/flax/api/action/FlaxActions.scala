@@ -176,7 +176,7 @@ object FlaxActions {
   private def izz(e: Elem, name: String, f: Elem => Boolean): Action[Boolean] =
     for {
       b <- fromSideEffectWithLog(s"Checking if element is $name: ${e.by}", _ => f(e))
-      _ <- Action.logOnly(s"Element ${if (b) "IS" else "IS NOT"} $name: ${e.by}")
+      _ <- Action.log(s"Element ${if (b) "IS" else "IS NOT"} $name: ${e.by}")
     } yield b
 
   def isSelected(e: Elem): Action[Boolean] =
