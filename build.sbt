@@ -1,17 +1,21 @@
 import sbt._
 import Keys._
 
-name := "flax"
+lazy val commonSettings = Seq(
+  name := "flax",
+  organization := "com.ephox",
+  licenses := Seq(("Apache License, Version 2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0"))),
+  homepage := Some(new URL("https://www.ephox.com/")),
+  organizationHomepage := Some(new URL("https://www.ephox.com/")),
+  scalaVersion := "2.12.5"
+)
 
-organization := "com.ephox"
-
-licenses := Seq(("Apache License, Version 2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0")))
-
-homepage := Some(new URL("https://www.ephox.com/"))
-
-organizationHomepage := Some(new URL("https://www.ephox.com/"))
-
-scalaVersion := "2.12.5"
+lazy val flax = (project in file("."))
+  .configs(IntegrationTest)
+  .settings(
+    commonSettings,
+    Defaults.itSettings
+  )
 
 scalacOptions in Compile := Seq(
     "-deprecation"

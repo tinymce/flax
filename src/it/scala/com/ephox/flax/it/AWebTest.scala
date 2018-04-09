@@ -1,6 +1,4 @@
-package com.ephox.flax.webtests
-
-import java.io.File
+package com.ephox.flax.it
 
 import com.ephox.flax.api.action.SeleniumActions
 import com.ephox.flax.api.elem.Browser
