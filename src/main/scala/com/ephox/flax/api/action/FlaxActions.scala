@@ -210,4 +210,7 @@ object FlaxActions {
   def deselectBy(by: By): Action[Unit] =
     findAnd(deselect, by)
 
+  def close: Action[Unit] =
+    fromSideEffectWithLog("Closing browser", _.d.close())
+
 }
