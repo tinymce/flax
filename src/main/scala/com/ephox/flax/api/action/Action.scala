@@ -134,9 +134,6 @@ object Action {
   def noop: Action[Unit] =
     point(())
 
-  def logOnly(s: String): Action[Unit] =
-    noop.setLog(Log.single(s))
-
   /**
     * Wraps an impure function in an Action, catching any exceptions.
     */
