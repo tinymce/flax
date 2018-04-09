@@ -13,8 +13,6 @@ organizationHomepage := Some(new URL("https://www.ephox.com/"))
 
 scalaVersion := "2.12.5"
 
-
-
 scalacOptions in Compile := Seq(
     "-deprecation"
   , "-unchecked"
@@ -26,10 +24,6 @@ scalacOptions in Compile := Seq(
   , "-Ywarn-value-discard"
   , "-Ywarn-unused-import"
 )
-
-resolvers += Resolver.sonatypeRepo("releases")
-
-addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6")
 
 parallelExecution in Test := false
 fork in test := false
