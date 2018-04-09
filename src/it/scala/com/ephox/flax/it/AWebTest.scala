@@ -10,6 +10,6 @@ class AWebTest extends Specification with FlaxSpec {
   override def curBrowser: Browser = Browser.firefox
 
   "flaxo" >> {
-    FlaxActions.get("https://tinymce.com").onFinish(FlaxActions.close)
+    FlaxActions.get("https://tinymce.com")
   }
 }
