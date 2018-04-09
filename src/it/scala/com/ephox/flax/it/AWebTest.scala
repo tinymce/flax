@@ -13,8 +13,6 @@ class AWebTest extends Specification with FlaxSpec {
 
     println(System.getProperty("webdriver.gecko.driver"))
 
-    for {
-      _ <- FlaxActions.get("https://tinymce.com")
-    } yield ()
+    FlaxActions.get("https://tinymce.com").onFinish(FlaxActions.close)
   }
 }

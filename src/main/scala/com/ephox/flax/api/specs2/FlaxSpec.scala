@@ -2,7 +2,7 @@ package com.ephox.flax
 package api.specs2
 
 import api.action.Action.noop
-import api.action.{Action, FlaxActions}
+import api.action.Action
 import api.elem.Driver.driverForBrowser
 import api.elem.{Browser, Driver}
 import RunAsResult.runAsResult
@@ -16,14 +16,14 @@ import org.specs2.specification.{AfterAll, BeforeEach}
   * Usage:
   *
   * {{{
-  *   trait MyFlax extends Flax {
+  *   trait MyFlax extends FlaxSpec {
   *     override def curBrowser: Browser = Firefox
   *
   *     //optional
-  *     override def initialAction: Action[Unit] = ...
+  *     override def beforeAllAction: Action[Unit] = ...
   *
   *     //optional
-  *     override def finalAction: Action[Unit] = ...
+  *     override def afterAllAction: Action[Unit] = ...
   *   }
   * }}}
   *
