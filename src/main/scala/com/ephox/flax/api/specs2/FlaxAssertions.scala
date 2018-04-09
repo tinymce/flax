@@ -30,7 +30,7 @@ object FlaxAssertions {
       }
     }
 
-  def assertTrue(b: => Boolean): Action[Unit] =
+  def assertTrue(b: Boolean): Action[Unit] =
     assert(b must beTrue)
 
   def assertEquals[T](a: => T, b: => T): Action[Unit] =
