@@ -12,7 +12,7 @@ import scala.collection.JavaConverters._
   * Some extra combinators for producing Selenium [[By]] values.
   *
   * No effect-tracking done here - it's expected that these values are only called by
-  * effect-tracked operations in [[SeleniumActions]].
+  * effect-tracked operations in [[FlaxActions]].
   */
 object Bys {
 

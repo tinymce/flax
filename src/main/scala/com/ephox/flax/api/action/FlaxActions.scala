@@ -16,7 +16,7 @@ import org.openqa.selenium.support.ui.Select
 import scalaz.effect.IO
 import scalaz._
 
-object SeleniumActions {
+object FlaxActions {
 
   private def findElement(d: Driver, by: By): IO[Option[Elem]] =
     IO(headOption(d.d.findElements(by)) map (we => elem(we, by)))

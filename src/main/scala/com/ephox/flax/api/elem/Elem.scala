@@ -5,7 +5,7 @@ import org.openqa.selenium.{By, WebElement}
 
 /**
   * Wrapper around [[WebElement]].
-  * Doesn't expose any methods - use [[com.ephox.flax.api.action.SeleniumActions]]
+  * Doesn't expose any methods - use [[com.ephox.flax.api.action.FlaxActions]]
   */
 final case class Elem private (private[flax] val e: WebElement, by: By)
 

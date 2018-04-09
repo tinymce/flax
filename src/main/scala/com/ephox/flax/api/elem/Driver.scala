@@ -12,7 +12,7 @@ import selenium.safari.SafariDriver
 
 /**
   * Wrapper around [[WebDriver]].
-  * Doesn't expose any methods - use [[Driver]] and [[com.ephox.flax.api.action.SeleniumActions]] for these.
+  * Doesn't expose any methods - use [[Driver]] and [[com.ephox.flax.api.action.FlaxActions]] for these.
   */
 final case class Driver private (private[flax] val d: WebDriver)
 

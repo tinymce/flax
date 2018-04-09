@@ -3,7 +3,7 @@ package api.specs2
 
 import com.ephox.flax.api.action.Log.single
 import com.ephox.flax.api.action.{Action, Err, Log}
-import com.ephox.flax.api.action.SeleniumActions._
+import com.ephox.flax.api.action.FlaxActions._
 import com.ephox.flax.api.elem.Elem
 import org.openqa.selenium.By
 import org.specs2.execute.Result
@@ -13,7 +13,7 @@ import scalaz.effect.IO
 import org.specs2.matcher.MatchResult
 import org.specs2.matcher.MustMatchers._
 
-object SeleniumAssertions {
+object FlaxAssertions {
 
   def assert[A](matchResult: => MatchResult[A]): Action[Unit] =
     Action.fromDiowe { _ =>

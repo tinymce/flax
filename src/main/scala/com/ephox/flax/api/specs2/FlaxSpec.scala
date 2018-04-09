@@ -2,7 +2,7 @@ package com.ephox.flax
 package api.specs2
 
 import api.action.Action.noop
-import api.action.{Action, SeleniumActions}
+import api.action.{Action, FlaxActions}
 import api.elem.Driver.driverForBrowser
 import api.elem.{Browser, Driver}
 import RunAsResult.runAsResult

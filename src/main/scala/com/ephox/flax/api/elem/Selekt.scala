@@ -6,7 +6,7 @@ import org.openqa.selenium.support.ui.Select
 
 /**
   * Wrapper around [[Select]].
-  * Doesn't expose any methods - use [[com.ephox.flax.api.action.SeleniumActions]]
+  * Doesn't expose any methods - use [[com.ephox.flax.api.action.FlaxActions]]
   */
 final case class Selekt private (private[flax] val select: Select, by: By)
 
