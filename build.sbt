@@ -47,8 +47,8 @@ libraryDependencies ++= Seq(
 
   , "org.scalacheck" %% "scalacheck" % "1.13.1"
 
-  , "org.seleniumhq.selenium" % "selenium-java" % seleniumVersion
-  , "org.seleniumhq.selenium" % "selenium-server" % seleniumVersion
+  , "org.seleniumhq.selenium" % "selenium-java"           % seleniumVersion
+  , "org.seleniumhq.selenium" % "selenium-server"         % seleniumVersion
   , "org.seleniumhq.selenium" % "selenium-firefox-driver" % seleniumVersion
 
   , "com.codeborne" % "phantomjsdriver" % "1.4.4"
