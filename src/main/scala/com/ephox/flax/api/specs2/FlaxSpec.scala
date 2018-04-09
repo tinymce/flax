@@ -36,7 +36,7 @@ import org.specs2.specification.{AfterAll, BeforeEach}
   *
   * This is mainly an example - you may wish to integrate into specs2 differently.
   */
-trait Flax extends AfterAll with BeforeEach {
+trait FlaxSpec extends AfterAll with BeforeEach {
 
   def curBrowser: Browser
 
@@ -47,20 +47,20 @@ trait Flax extends AfterAll with BeforeEach {
   def beforeEachAction: Action[Unit] = noop
 
   override def afterAll(): Unit =
-    Flax.unload(afterAllAction)
+    FlaxSpec.unload(afterAllAction)
 
   override def before(): Unit = {
-    val driver = Flax.load(curBrowser, beforeAllAction)
+    val driver = FlaxSpec.load(curBrowser, beforeAllAction)
     beforeEachAction.runOrThrow(driver)
   }
 
   implicit def runTest[A](action: Action[A]): Result = {
-    implicit val driver: Driver = Flax.get
+    implicit val driver: Driver = FlaxSpec.get
     runAsResult(action)
   }
 }
 
-object Flax {
+object FlaxSpec {
   // Argh! Mutation! I blame Specs2.
 
   private var driver: Option[Driver] = None

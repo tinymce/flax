@@ -2,10 +2,10 @@ package com.ephox.flax.it
 
 import com.ephox.flax.api.action.SeleniumActions
 import com.ephox.flax.api.elem.Browser
-import com.ephox.flax.api.specs2.Flax
+import com.ephox.flax.api.specs2.FlaxSpec
 import org.specs2.mutable.Specification
 
-class AWebTest extends Specification with Flax {
+class AWebTest extends Specification with FlaxSpec {
 
   override def curBrowser: Browser = Browser.firefox
 
