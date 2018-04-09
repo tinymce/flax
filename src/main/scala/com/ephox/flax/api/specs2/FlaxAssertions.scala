@@ -6,9 +6,9 @@ import com.ephox.flax.api.action.{Action, Err, Log}
 import com.ephox.flax.api.action.FlaxActions._
 import com.ephox.flax.api.elem.Elem
 import org.openqa.selenium.By
-import org.specs2.execute.Result
 
-import scalaz.{Writer, \/}
+import scalaz._
+import scalaz.syntax.monad._
 import scalaz.effect.IO
 import org.specs2.matcher.MatchResult
 import org.specs2.matcher.MustMatchers._
@@ -16,9 +16,8 @@ import org.specs2.matcher.MustMatchers._
 object FlaxAssertions {
 
   def assert[A](matchResult: => MatchResult[A]): Action[Unit] =
-    Action.fromDiowe { _ =>
-      IO {
-        val result: Result = matchResult.toResult
+    Action.fromDiowe_ {
+      IO(matchResult.toResult) map { result =>
 
         val resultS: Log[String] = single[String](result.toString)
 
@@ -37,11 +36,8 @@ object FlaxAssertions {
   def assertEquals[T](a: => T, b: => T): Action[Unit] =
     assert(a must_=== b)
 
-  def assertAction(action: Action[Boolean]): Action[Unit] = for {
-    b <- action
-    _ <- assertTrue(b)
-  } yield ()
-
+  def assertAction(action: Action[Boolean]): Action[Unit] =
+    action >>= assertTrue
 
   def assertSelected(e: Elem): Action[Unit] =
     assertAction(isSelected(e))
