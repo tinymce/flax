@@ -6,7 +6,7 @@ import api.action.Action
 import api.elem.Driver.driverForBrowser
 import api.elem.{Browser, Driver}
 import RunAsResult.runAsResult
-
+import com.ephox.flax.api.action.FlaxActions.close
 import org.specs2.execute.Result
 import org.specs2.specification.{AfterAll, BeforeEach}
 
@@ -44,7 +44,7 @@ trait FlaxSpec extends AfterAll with BeforeEach {
 
   def afterAllAction: Action[Unit] = noop
 
-  def beforeEachAction: Action[Unit] = noop
+  def beforeEachAction: Action[Unit] = close
 
   override def afterAll(): Unit =
     FlaxSpec.unload(afterAllAction)
