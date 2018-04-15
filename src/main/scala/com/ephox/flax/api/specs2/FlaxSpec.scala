@@ -79,6 +79,6 @@ object FlaxSpec {
 
   def unload[T](a: Action[T]): Unit =
     synchronized {
-      driver foreach (a runOrThrow _)
+      driver foreach a.runOrThrow
     }
 }

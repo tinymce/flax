@@ -37,7 +37,7 @@ import scalaz.effect.IO
 
 final case class Action[A](run: ActionBase[A]) {
 
-  def runOrThrow(implicit d: Driver): A =
+  def runOrThrow(d: Driver): A =
     run.run.run.run(d).unsafePerformIO() match {
       case (w, z) =>
         val log = "\nSteps performed:\n" + w.pprint + "\n"
