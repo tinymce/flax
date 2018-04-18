@@ -55,13 +55,12 @@ Implementation Details
 
 Actions wrap a stack of types which provide:
 
- - input of a Selenium WebDriver wrapper object (Reader\[Driver, _\])
  - effect tracking (IO)
+ - input of a Selenium WebDriver wrapper object (Reader\[Driver, _\])
  - logging (Writer\[Log, _\])
  - error reporting (\/)
  
-This stack is implemented as a special-case data type to avoid problems
-with monad transformers in Scala. 
+This stack is implemented as monad transformers in Scala.
 
 ### Log
 
@@ -73,8 +72,13 @@ Action.nested adds a new level of structure - it makes a new Log, and takes
 the previous log as its children.  
 
 
+Developer notes
+---------------
+
+ - [sbt-bintray plugin](https://github.com/sbt/sbt-bintray)
+
 Acknowledgements
 ----------------
 
-Thanks to JFrog Bintra for hosting Flax's binaries.
+Thanks to JFrog Bintray for hosting Flax's binaries.
 
