@@ -1,6 +1,6 @@
 node('nix') {
     stage('build') {
-        git([url: 'https://github.com/ephox/flax.git', branch: '*'])
+        checkout scm
         sh 'nix-shell -p sbt --command "sbt test"'
     }
 
