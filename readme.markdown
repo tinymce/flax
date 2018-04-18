@@ -15,6 +15,11 @@ other integrations are possible.
 
 Flax has a dependency on scalaz for its functional abstractions.
 
+[binaries](https://bintray.com/ephox/flax/flax)
+
+[code](https://github.com/ephox/flax)
+
+
 Getting Started
 ---------------
 
@@ -23,6 +28,13 @@ Assuming you're using sbt:
 1. Download any browser drivers you need and ensure they're on your path. e.g.
    - [geckodriver](https://github.com/mozilla/geckodriver/releases)
 2. Add flax to your build.sbt file.
+
+```scala
+   resolvers += Resolver.bintrayRepo("ephox", "flax")
+
+   libraryDependencies += "com.ephox" %% "flax" % "2.0.0" % Test withSources
+```
+
 3. Disable parallel execution in your build settings
    `parallelExecution := false`
 4. Create a test base class. e.g. [ExampleTestBase.scala](src/it/scala/com/ephox/flax/it/ExampleTestBase.scala)
@@ -59,4 +71,10 @@ It's a list of nodes, and each node has a payload and a Log value representing i
 flatMapping appends the logs. 
 Action.nested adds a new level of structure - it makes a new Log, and takes 
 the previous log as its children.  
+
+
+Acknowledgements
+----------------
+
+Thanks to JFrog Bintra for hosting Flax's binaries.
 

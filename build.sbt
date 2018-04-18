@@ -4,10 +4,11 @@ import Keys._
 lazy val commonSettings = Seq(
   name := "flax",
   organization := "com.ephox",
-  licenses := Seq(("Apache License, Version 2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0"))),
+  licenses := Seq(("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0"))),
   homepage := Some(new URL("https://www.ephox.com/")),
   organizationHomepage := Some(new URL("https://www.ephox.com/")),
-  scalaVersion := "2.12.5"
+  scalaVersion := "2.12.5",
+  bintrayRepository := "flax"
 )
 
 lazy val flax = (project in file("."))
