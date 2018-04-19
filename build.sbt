@@ -44,9 +44,6 @@ libraryDependencies ++= Seq(
   , "org.scalaz" %% "scalaz-effect"     % scalazVersion
 
   , "org.specs2" %% "specs2-core"       % specs2Version
-  , "org.specs2" %% "specs2-scalacheck" % specs2Version
-
-  , "org.scalacheck" %% "scalacheck" % "1.13.5"
 
   , "org.seleniumhq.selenium" % "selenium-java"           % seleniumVersion
   , "org.seleniumhq.selenium" % "selenium-server"         % seleniumVersion
@@ -54,6 +51,8 @@ libraryDependencies ++= Seq(
 
   , "com.codeborne" % "phantomjsdriver" % "1.4.4"
 
+  , "org.scalacheck" %% "scalacheck" % "1.13.5" % Test
+  , "org.specs2" %% "specs2-scalacheck" % specs2Version % Test
   , "org.typelevel" %% "scalaz-specs2" % "0.5.2" % Test
 ).map(_.withSources)
 
