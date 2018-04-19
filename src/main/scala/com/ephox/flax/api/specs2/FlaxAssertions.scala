@@ -1,34 +1,40 @@
 package com.ephox.flax
 package api.specs2
 
+import com.ephox.flax.api.action.FlaxActions._
 import com.ephox.flax.api.action.Log.single
 import com.ephox.flax.api.action.{Action, Err, Log}
-import com.ephox.flax.api.action.FlaxActions._
 import com.ephox.flax.api.elem.Elem
 import org.openqa.selenium.By
-
-import scalaz._
-import scalaz.syntax.monad._
-import scalaz.effect.IO
+import org.specs2.execute
+import org.specs2.execute._
 import org.specs2.matcher.MatchResult
 import org.specs2.matcher.MustMatchers._
 
+import scala.annotation.tailrec
+import scalaz._
+import scalaz.effect.IO
+import scalaz.syntax.monad._
+
 object FlaxAssertions {
 
-  def assert[A](matchResult: => MatchResult[A]): Action[Unit] =
-    Action.fromDiowe_ {
-      IO(matchResult.toResult) map { result =>
+  // TODO: test this
+  @tailrec
+  private[flax] def resultToEither(r: Result): Result \/ Unit = r match {
+    case DecoratedResult(_, nested) => resultToEither(nested)
+    case execute.Success(_, _) | Skipped(_, _) => \/.right(())
+    case execute.Failure(_, _, _, _) | Error(_, _) | Pending(_) => \/.left(r)
+  }
 
+  def assert[A](matchResult: => MatchResult[A]): Action[Unit] = {
+    Action.fromSideEffect_(matchResult.toResult).flatMap { result =>
+      Action.fromDiowe_(IO {
         val resultS: Log[String] = single[String](result.toString)
-
-        val e = if (result.isFailure)
-          \/.left[Err, Unit](Err.assertionFailed(result.message))
-        else
-          \/.right[Err, Unit](())
-
-        Writer(resultS, e)
-      }
+        val z = resultToEither(result).leftMap(x => Err.assertionFailed(x.message))
+        Writer(resultS, z)
+      })
     }
+  }
 
   def assertTrue(b: Boolean): Action[Unit] =
     assert(b must beTrue)
