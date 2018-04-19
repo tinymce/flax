@@ -32,7 +32,7 @@ Assuming you're using sbt:
 ```scala
    resolvers += Resolver.bintrayRepo("ephox", "flax")
 
-   libraryDependencies += "com.ephox" %% "flax" % "2.0.1" % Test withSources
+   libraryDependencies += "com.ephox" %% "flax" % FLAX_VERSION % Test withSources
 ```
 
 3. Disable parallel execution in your build settings
