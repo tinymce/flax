@@ -46,7 +46,7 @@ libraryDependencies ++= Seq(
   , "org.specs2" %% "specs2-core"       % specs2Version
   , "org.specs2" %% "specs2-scalacheck" % specs2Version
 
-  , "org.scalacheck" %% "scalacheck" % "1.13.1"
+  , "org.scalacheck" %% "scalacheck" % "1.13.5"
 
   , "org.seleniumhq.selenium" % "selenium-java"           % seleniumVersion
   , "org.seleniumhq.selenium" % "selenium-server"         % seleniumVersion
