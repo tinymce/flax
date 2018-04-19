@@ -142,6 +142,12 @@ object Action {
     fromSideEffectWithLogs(DList(), run)
 
   /**
+    * Wraps an impure function in an Action, catching any exceptions.
+    */
+  def fromSideEffect_[A](run: => A): Action[A] =
+    fromSideEffect(_ => run)
+
+  /**
     * Wraps an impure function in an Action, catching any exceptions. Includes a log message.
     */
   def fromSideEffectWithLog[A](message: String, run: Driver => A): Action[A] =
