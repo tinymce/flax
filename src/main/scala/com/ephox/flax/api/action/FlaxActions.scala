@@ -10,7 +10,6 @@ import api.elem.Elem
 import api.elem.Selekt
 import Selekt.selekt
 import com.ephox.flax.api.wait.WaitOptions
-import internal.JuListUtils._
 import internal.Waiter
 import org.openqa.selenium.{By, Cookie, JavascriptExecutor, WebDriver}
 import org.openqa.selenium.WebDriver.{Navigation, Options}
