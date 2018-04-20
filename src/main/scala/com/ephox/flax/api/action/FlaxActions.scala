@@ -11,12 +11,11 @@ import api.elem.Selekt
 import Selekt.selekt
 import internal.JuListUtils._
 import internal.Waiter
-import org.openqa.selenium.{By, Cookie}
+import org.openqa.selenium.{By, Cookie, JavascriptExecutor, WebDriver}
 import org.openqa.selenium.WebDriver.{Navigation, Options}
 import org.openqa.selenium.support.ui.Select
 
 import scala.collection.JavaConverters.asScalaSet
-
 import scalaz.effect.IO
 import scalaz._
 
@@ -28,17 +27,19 @@ object FlaxActions {
   def get(url: String): Action[Unit] =
     fromSideEffectWithLog("Opening URL: " + url, _.d.get(url))
 
+  /** Finds the "first" element defined by the By selector, polling until a default timeout. */
   def find(by: By): Action[Elem] =
     Action.fromDiowe { d =>
       Waiter.waitFor(findElement(d, by)) map (z => Writer(single("Finding element: " + by), ErrOrElem.fromOption(couldNotFindElement(by))(z)))
     }
 
+  /** Finds the "first" element defined by the By selector. */
   def findNow(by: By): Action[Elem] =
     Action.fromDiowe { d =>
       findElement(d, by) map (z => Writer(single("Finding element (immediately): " + by), ErrOrElem.fromOption(couldNotFindElement(by))(z)))
     }
 
-  /** Does this element exist in the DOM right now? */
+  /** Does an element matching the By selector exist in the DOM right now? */
   def exists(by: By): Action[Boolean] =
     Action.fromDiowe { d =>
       findElement(d, by) map { e =>
@@ -48,9 +49,11 @@ object FlaxActions {
       }
     }
 
+  /** Clicks the specified element  */
   def click(e: Elem): Action[Unit] =
     fromSideEffectWithLog("Clicking element: " + e.by, _ => e.e.click())
 
+  /** Finds the "first" element defined by the By selector (polling until a default timeout), then clicks it. */
   def clickBy(by: By): Action[Unit] =
     findAnd(click, by)
 
@@ -251,7 +254,23 @@ object FlaxActions {
   def getCookieNamed(name: String): Action[Cookie] =
     getCookieNamedOpt(name).onlyIfSomeWithLog(s"Could not find cookie named $name")
 
-  private def manage[T](log: String, f: Options => T): Action[T] = {
+  private def manage[T](log: String, f: Options => T): Action[T] =
     fromSideEffectWithLog(log, d => f(d.d.manage()))
-  }
+
+  // TODO: Better type for the args. Make a typesafe marshalling API
+  def executeScript(script: String, args: List[Object]): Action[Object] =
+    onJavascriptExecutor("Execute script", _.executeScript(script, args:_*))
+
+  // TODO: Better type for the args. Make a typesafe marshalling API
+  def executeAsyncScript(script: String, args: List[Object]): Action[Object] =
+    onJavascriptExecutor("Execute async script", _.executeAsyncScript(script, args:_*))
+
+  private def onJavascriptExecutor[T](log: String, f: JavascriptExecutor => T): Action[T] =
+    fromSideEffectWithLog(log, { d =>
+      val wd: WebDriver = d.d
+      // Not the safest, but all bar "UnimplementedWebDriver" are subclasses of JavaScriptExecutor
+      // and fromSideEffectWithLog will catch any exceptions.
+      val jse: JavascriptExecutor = wd.asInstanceOf[JavascriptExecutor]
+      f(jse)
+    })
 }
