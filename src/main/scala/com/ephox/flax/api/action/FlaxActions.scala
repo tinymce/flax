@@ -11,9 +11,12 @@ import api.elem.Selekt
 import Selekt.selekt
 import internal.JuListUtils._
 import internal.Waiter
-import org.openqa.selenium.By
-import org.openqa.selenium.WebDriver.Navigation
+import org.openqa.selenium.{By, Cookie}
+import org.openqa.selenium.WebDriver.{Navigation, Options}
 import org.openqa.selenium.support.ui.Select
+
+import scala.collection.JavaConverters.asScalaSet
+
 import scalaz.effect.IO
 import scalaz._
 
@@ -225,5 +228,30 @@ object FlaxActions {
 
   private def navigate(log: String, f: Navigation => Unit): Action[Unit] = {
     fromSideEffectWithLog(log, d => f(d.d.navigate()))
+  }
+
+  def addCookie(cookie: Cookie): Action[Unit] =
+    manage("Add cookie: " + cookie, _.addCookie(cookie))
+
+  def deleteCookieNamed(name: String): Action[Unit] =
+    manage(s"Delete cookie named: $name", _.deleteCookieNamed(name))
+
+  def deleteCookie(c: Cookie): Action[Unit] =
+    manage(s"Delete cookie $c", _.deleteCookie(c))
+
+  def deleteAllCookies(): Action[Unit] =
+    manage(s"Delete all cookies", _.deleteAllCookies())
+
+  def getCookies: Action[List[Cookie]] =
+    manage("Get cookies", x => asScalaSet(x.getCookies).toList)
+
+  def getCookieNamedOpt(name: String): Action[Option[Cookie]] =
+    manage(s"Get cookie named $name", x => Option.apply(x.getCookieNamed(name)))
+
+  def getCookieNamed(name: String): Action[Cookie] =
+    getCookieNamedOpt(name).onlyIfSomeWithLog(s"Could not find cookie named $name")
+
+  private def manage[T](log: String, f: Options => T): Action[T] = {
+    fromSideEffectWithLog(log, d => f(d.d.manage()))
   }
 }
