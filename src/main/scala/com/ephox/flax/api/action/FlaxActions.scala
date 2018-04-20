@@ -9,6 +9,7 @@ import api.elem.Driver
 import api.elem.Elem
 import api.elem.Selekt
 import Selekt.selekt
+import com.ephox.flax.api.wait.WaitOptions
 import internal.JuListUtils._
 import internal.Waiter
 import org.openqa.selenium.{By, Cookie, JavascriptExecutor, WebDriver}
@@ -29,8 +30,12 @@ object FlaxActions {
 
   /** Finds the "first" element defined by the By selector, polling until a default timeout. */
   def find(by: By): Action[Elem] =
+    findWithWaitOptions(by, WaitOptions.default)
+
+  /** Finds the "first" element defined by the By selector, polling until a default timeout. */
+  def findWithWaitOptions(by: By, wo: WaitOptions): Action[Elem] =
     Action.fromDiowe { d =>
-      Waiter.waitFor(findElement(d, by)) map (z => Writer(single("Finding element: " + by), ErrOrElem.fromOption(couldNotFindElement(by))(z)))
+      Waiter.waitFor(findElement(d, by), wo) map (z => Writer(single("Finding element: " + by), ErrOrElem.fromOption(couldNotFindElement(by))(z)))
     }
 
   /** Finds the "first" element defined by the By selector. */
@@ -58,8 +63,11 @@ object FlaxActions {
     findAnd(click, by)
 
   def findAnd[T](f: Elem => Action[T], by: By): Action[T] =
+    findWithWaitOptionsAnd(f, by, WaitOptions.default)
+
+  def findWithWaitOptionsAnd[T](f: Elem => Action[T], by: By, wo: WaitOptions): Action[T] =
     for {
-      e <- find(by)
+      e <- findWithWaitOptions(by, wo)
       s <- f(e)
     } yield s
 
@@ -148,7 +156,10 @@ object FlaxActions {
     * - if the condition fails, or does not succeed with true, waitFor(condition) fails
     */
   def waitForActionToReturnTrue(condition: Action[Boolean]): Action[Unit] =
-    Waiter.waitForActionToReturnTrue(condition)
+    Waiter.waitForActionToReturnTrue(condition, WaitOptions.default)
+
+  def waitForActionToReturnTrueWithWaitOptions(condition: Action[Boolean], wo: WaitOptions): Action[Unit] =
+    Waiter.waitForActionToReturnTrue(condition, wo)
 
   /**
     * Wait for a condition
@@ -157,7 +168,10 @@ object FlaxActions {
     * - if the condition fails, waitFor(condition) polls until timeout
     */
   def waitForActionToSucceed[T](condition: Action[T]): Action[T] =
-    Waiter.waitForActionToSucceed(condition)
+    waitForActionToSucceedWithWaitOptions(condition, WaitOptions.default)
+
+  def waitForActionToSucceedWithWaitOptions[T](condition: Action[T], wo: WaitOptions): Action[T] =
+    Waiter.waitForActionToSucceed(condition, wo)
 
   def sleep(millis: Long): Action[Unit] =
     fromSideEffectWithLog(s"Sleeping for $millis milliseconds", _ => Thread.sleep(millis))
