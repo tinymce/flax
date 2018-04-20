@@ -16,14 +16,17 @@ import org.openqa.selenium.{By, Cookie, JavascriptExecutor, WebDriver}
 import org.openqa.selenium.WebDriver.{Navigation, Options}
 import org.openqa.selenium.support.ui.Select
 
-import scala.collection.JavaConverters.asScalaSet
+import scala.collection.JavaConverters._
 import scalaz.effect.IO
 import scalaz._
 
 object FlaxActions {
 
   private def findElement(d: Driver, by: By): IO[Option[Elem]] =
-    IO(headOption(d.d.findElements(by)) map (we => elem(we, by)))
+    findElements(d, by).map(_.headOption)
+
+  private def findElements(d: Driver, by: By): IO[List[Elem]] =
+    IO(d.d.findElements(by).asScala.toList.map(elem(_, by)))
 
   def get(url: String): Action[Unit] =
     fromSideEffectWithLog("Opening URL: " + url, _.d.get(url))
@@ -42,6 +45,13 @@ object FlaxActions {
   def findNow(by: By): Action[Elem] =
     Action.fromDiowe { d =>
       findElement(d, by) map (z => Writer(single("Finding element (immediately): " + by), ErrOrElem.fromOption(couldNotFindElement(by))(z)))
+    }
+
+  def findAllNow(by: By): Action[List[Elem]] =
+    Action.fromDiowe { d =>
+      findElements(d, by) map { z =>
+        Writer(single("Finding elements (immediately): " + by), \/.right(z))
+      }
     }
 
   /** Does an element matching the By selector exist in the DOM right now? */
@@ -273,11 +283,11 @@ object FlaxActions {
 
   // TODO: Better type for the args. Make a typesafe marshalling API
   def executeScript(script: String, args: List[Object]): Action[Object] =
-    onJavascriptExecutor("Execute script", _.executeScript(script, args:_*))
+    onJavascriptExecutor("Execute script", _.executeScript(script, args: _*))
 
   // TODO: Better type for the args. Make a typesafe marshalling API
   def executeAsyncScript(script: String, args: List[Object]): Action[Object] =
-    onJavascriptExecutor("Execute async script", _.executeAsyncScript(script, args:_*))
+    onJavascriptExecutor("Execute async script", _.executeAsyncScript(script, args: _*))
 
   private def onJavascriptExecutor[T](log: String, f: JavascriptExecutor => T): Action[T] =
     fromSideEffectWithLog(log, { d =>
