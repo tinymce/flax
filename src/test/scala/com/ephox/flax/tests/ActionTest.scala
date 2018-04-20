@@ -28,7 +28,17 @@ class ActionTest extends Specification with ScalaCheck with ScalazMatchers {
 
     "fromSideEffectWithLog" >> {
       "with pure value" >> prop { (s: String, i: Int) =>
-        Action.fromSideEffectWithLog(s, _ => i).run.run.run.run(null).unsafePerformIO() must equal((Log.single(s), \/.right[Err, Int](i)))
+        Action.fromSideEffectWithLog(s, _ => i).unsafePerformIO(null) must equal((Log.single(s), \/.right[Err, Int](i)))
+      }
+    }
+
+    "onlyIfSome" >> {
+      "none" >> {
+        Action.point[Option[Int]](scalaz.std.option.none).onlyIfSome[Int].unsafePerformIO(null)._2.isLeft must beTrue
+      }
+
+      "some" >> prop { (i: Int) =>
+        Action.point(scalaz.std.option.some(i)).onlyIfSome[Int].unsafePerformIO(null)._2 must equal(\/.right[Err, Int](i))
       }
     }
   }

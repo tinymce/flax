@@ -91,6 +91,17 @@ final case class Action[A](run: ActionBase[A]) {
       _ <- this onlyIf b
     } yield ()
 
+  def onlyIfSomeWithLog[B](noneMessage: String)(implicit ev: A =:= Option[B]): Action[B] =
+    flatMap[B] { a =>
+      ev(a) match {
+        case Some(z) => Action.point[B](z)
+        case None => Action.fromErr[B](Err.other(noneMessage))
+      }
+    }
+
+  def onlyIfSome[B](implicit ev: A =:= Option[B]): Action[B] =
+    onlyIfSomeWithLog("Expected Some, but was None")
+
   def repeat(n: Int): Action[Unit] =
     if (n <= 0) Action.noop
     else for {
@@ -109,6 +120,9 @@ final case class Action[A](run: ActionBase[A]) {
 
   def onFinish[B](action: Action[B]): Action[A] =
     (attempt <* action).unattempt
+
+  def unsafePerformIO(d: Driver): (Log[String], Err \/ A) =
+    run.run.run.run(d).unsafePerformIO()
 }
 
 object Action {
