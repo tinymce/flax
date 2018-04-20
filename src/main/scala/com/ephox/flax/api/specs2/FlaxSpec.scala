@@ -8,7 +8,7 @@ import api.elem.{Browser, Driver}
 import RunAsResult.runAsResult
 import com.ephox.flax.api.action.FlaxActions.close
 import org.specs2.execute.Result
-import org.specs2.specification.{AfterAll, BeforeEach}
+import org.specs2.specification.{AfterAll, BeforeAfterEach}
 
 /**
   * specs2 mixin for Flax tests.
@@ -36,7 +36,7 @@ import org.specs2.specification.{AfterAll, BeforeEach}
   *
   * This is mainly an example - you may wish to integrate into specs2 differently.
   */
-trait FlaxSpec extends AfterAll with BeforeEach {
+trait FlaxSpec extends AfterAll with BeforeAfterEach {
 
   def curBrowser: Browser
 
@@ -46,21 +46,28 @@ trait FlaxSpec extends AfterAll with BeforeEach {
 
   def beforeEachAction: Action[Unit] = noop
 
-  override def afterAll(): Unit =
+  def afterEachAction: Action[Unit] = noop
+
+  override final def afterAll(): Unit =
     FlaxSpec.unload(afterAllAction)
 
-  override def before(): Unit = {
+  override final def before(): Unit = {
     val driver = FlaxSpec.load(curBrowser, beforeAllAction)
     beforeEachAction.runOrThrow(driver)
   }
 
-  implicit def runTest[A](action: Action[A]): Result = {
+  override final def after(): Unit = {
+    val driver = FlaxSpec.load(curBrowser, beforeAllAction)
+    afterEachAction.runOrThrow(driver)
+  }
+
+  implicit final def runTest[A](action: Action[A]): Result = {
     implicit val driver: Driver = FlaxSpec.get
     runAsResult(action)
   }
 }
 
-object FlaxSpec {
+private[flax] object FlaxSpec {
   // Argh! Mutation! I blame Specs2.
 
   private var driver: Option[Driver] = None
