@@ -67,6 +67,18 @@ final case class Action[A](run: ActionBase[A]) {
   def mapLog(fn: Log[String] => Log[String]): Action[A] =
     fromWriterT(run.run.mapWritten(fn))
 
+  def prependLog(l: Log[String]): Action[A] =
+    mapLog(l ++ _)
+
+  def prependSingleLog(l: String): Action[A] =
+    prependLog(Log.single(l))
+
+  def appendLog(l: Log[String]): Action[A] =
+    mapLog(_ ++ l)
+
+  def appendSingleLog(l: String): Action[A] =
+    appendLog(Log.single(l))
+
   def map[B](fn: A => B): Action[B] =
     Functor[Action].map(this)(fn)
 
@@ -123,6 +135,9 @@ final case class Action[A](run: ActionBase[A]) {
 
   def unsafePerformIO(d: Driver): (Log[String], Err \/ A) =
     run.run.run.run(d).unsafePerformIO()
+
+  def or(other: Action[A]): Action[A] =
+    attempt.flatMap(_.fold(err => other.prependSingleLog(s"Action failed: ${err.toString}. Trying other action."), a => Action.point[A](a)))
 }
 
 object Action {
