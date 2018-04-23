@@ -2,13 +2,13 @@ package com.ephox.flax
 package api.specs2
 
 import api.action.Action.noop
-import api.action.Action
+import api.action.{Action, FlaxActions}
 import api.elem.Driver.driverForBrowser
 import api.elem.{Browser, Driver}
 import RunAsResult.runAsResult
-import com.ephox.flax.api.action.FlaxActions.close
 import org.specs2.execute.Result
-import org.specs2.specification.{AfterAll, BeforeAfterEach}
+import org.specs2.specification.{BeforeAfterAll, BeforeAfterEach}
+import scalaz.syntax.applicative._
 
 /**
   * specs2 mixin for Flax tests.
@@ -36,34 +36,35 @@ import org.specs2.specification.{AfterAll, BeforeAfterEach}
   *
   * This is mainly an example - you may wish to integrate into specs2 differently.
   */
-trait FlaxSpec extends AfterAll with BeforeAfterEach {
+trait FlaxSpec extends BeforeAfterAll with BeforeAfterEach {
 
   def curBrowser: Browser
 
   def beforeAllAction: Action[Unit] = noop
 
-  def afterAllAction: Action[Unit] = close
-
   def beforeEachAction: Action[Unit] = noop
 
   def afterEachAction: Action[Unit] = noop
 
-  override final def afterAll(): Unit =
-    FlaxSpec.unload(afterAllAction)
+  def afterAllAction: Action[Unit] = noop
+
+  override final def beforeAll(): Unit =
+    FlaxSpec.runBeforeAllAction(curBrowser, beforeAllAction)
+
 
   override final def before(): Unit = {
-    val driver = FlaxSpec.load(curBrowser, beforeAllAction)
-    beforeEachAction.runOrThrow(driver)
+    FlaxSpec.runBeforeEachAction(beforeEachAction)
   }
 
   override final def after(): Unit = {
-    val driver = FlaxSpec.load(curBrowser, afterAllAction)
-    afterEachAction.runOrThrow(driver)
+    FlaxSpec.runAfterEachAction(afterAllAction)
   }
 
+  override final def afterAll(): Unit =
+    FlaxSpec.runAfterAllAction(afterAllAction)
+
   implicit final def runTest[A](action: Action[A]): Result = {
-    implicit val driver: Driver = FlaxSpec.get
-    runAsResult(action)
+    FlaxSpec.runTestAction(action)
   }
 }
 
@@ -72,21 +73,36 @@ private[flax] object FlaxSpec {
 
   private var driver: Option[Driver] = None
 
-  def load[T](b: Browser, a: Action[T]): Driver =
+  def runBeforeAllAction[T](b: Browser, a: Action[T]): Unit =
     synchronized {
       if (driver.isEmpty) {
         val d = driverForBrowser(b)
-        a runOrThrow d
         driver = Some(d)
       }
-      driver.get
+      driver.foreach(a.runOrThrow)
+      ()
     }
 
-  def get[T]: Driver = synchronized { driver.get }
-
-  def unload[T](a: Action[T]): Unit =
+  def runBeforeEachAction(a: Action[Unit]): Unit =
     synchronized {
-      driver foreach a.runOrThrow
+      driver.fold(println("Driver not loaded - skipping beforeEachAction"))(a.runOrThrow)
+    }
+
+  def runTestAction[A](a: Action[A]): Result =
+    synchronized {
+      driver.fold(throw new RuntimeException("Driver not loaded - cannot run test"))(d => runAsResult(a, d))
+    }
+
+  def runAfterEachAction(a: Action[Unit]): Unit =
+    synchronized {
+      driver.fold(println("Driver not loaded - skipping afterEachAction"))(a.runOrThrow)
+    }
+
+  def runAfterAllAction[T](a: Action[T]): Unit = {
+    synchronized {
+      driver.fold(println("Driver not loaded - skipping afterAllAction"))(a.void.onFinish(FlaxActions.quit).runOrThrow)
       driver = None
     }
+    ()
+  }
 }

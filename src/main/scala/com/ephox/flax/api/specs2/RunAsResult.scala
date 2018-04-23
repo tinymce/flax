@@ -13,7 +13,7 @@ import scalaz.{-\/, \/-}
   */
 object RunAsResult {
 
-  def runAsResult[T](a: Action[T])(implicit d: Driver): Result =
+  def runAsResult[T](a: Action[T], d: Driver): Result =
     a.run.run.run.run(d).unsafePerformIO() match {
       case (w, z) =>
         val log = "\nSteps performed:\n" + w.pprint + "\n"
