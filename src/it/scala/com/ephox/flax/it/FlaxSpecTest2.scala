@@ -1,8 +1,8 @@
-package com.ephox.flax
-package api.specs2
+package com.ephox.flax.it
 
 import com.ephox.flax.api.action.FlaxActions
 import com.ephox.flax.api.elem.{Browser, Firefox}
+import com.ephox.flax.api.specs2.FlaxSpec
 import org.specs2.mutable.Specification
 
 class FlaxSpecTest2 extends Specification with FlaxSpec {
