@@ -57,7 +57,7 @@ trait FlaxSpec extends AfterAll with BeforeAfterEach {
   }
 
   override final def after(): Unit = {
-    val driver = FlaxSpec.load(curBrowser, beforeAllAction)
+    val driver = FlaxSpec.load(curBrowser, afterAllAction)
     afterEachAction.runOrThrow(driver)
   }
 
@@ -87,5 +87,6 @@ private[flax] object FlaxSpec {
   def unload[T](a: Action[T]): Unit =
     synchronized {
       driver foreach a.runOrThrow
+      driver = None
     }
 }
