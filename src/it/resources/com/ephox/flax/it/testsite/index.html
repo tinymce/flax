@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Site</title>
+    <script type="text/javascript">
+        var htmlEncode = function(text) {
+            var d = document.createElement('div');
+            var t = document.createTextNode(text);
+            d.appendChild(t);
+            return d.innerHTML;
+        };
+
+        var doSubmit = function() {
+            var name = document.getElementById("name").value;
+            document.getElementById('signupForm').style.display = "none";
+            document.getElementById('messages').innerHTML = "Thanks for signing up, " + htmlEncode(name);
+        };
+    </script>
+</head>
+<body>
+
+<h1>Test Site</h1>
+
+<h2>Sign up</h2>
+
+<form action="#" onsubmit="doSubmit(); return false;" id="signupForm">
+    Name: <input type="text" name="name" id="name" /><br />
+    <input type="submit" />
+</form>
+
+<div id="messages"></div>
+
+</body>
+</html>
