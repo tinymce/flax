@@ -3,7 +3,7 @@ package api.specs2
 
 import com.ephox.flax.api.action.FlaxActions._
 import com.ephox.flax.api.action.Log.single
-import com.ephox.flax.api.action.{Action, Err, Log}
+import com.ephox.flax.api.action.{Action, Err, FlaxActions, Log}
 import com.ephox.flax.api.elem.Elem
 import org.openqa.selenium.By
 import org.specs2.execute
@@ -17,6 +17,10 @@ import scalaz.effect.IO
 import scalaz.syntax.monad._
 
 object FlaxAssertions {
+  def assertText(by: By, expected: String): Action[String] = for {
+    actual <- FlaxActions.getTextBy(by)
+    _ <- assertEquals(actual, expected)
+  } yield actual
 
   // TODO: test this
   @tailrec

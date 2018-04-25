@@ -1,7 +1,7 @@
 package com.ephox.flax
 package api.action
 
-import Action.fromSideEffectWithLog
+import Action.{fromSideEffectWithLog, nested}
 import Err.couldNotFindElement
 import Log.single
 import api.elem.Elem.elem
@@ -17,9 +17,12 @@ import org.openqa.selenium.support.ui.Select
 
 import scala.collection.JavaConverters._
 import scalaz.effect.IO
+import scalaz.syntax.monad._
 import scalaz._
 
 object FlaxActions {
+  def getTextBy(by: By): Action[String] =
+    find(by) >>= (_.getText)
 
   private def findElement(d: Driver, by: By): IO[Option[Elem]] =
     findElements(d, by).map(_.headOption)
@@ -106,7 +109,10 @@ object FlaxActions {
     } yield ()
 
   def setTextBy(by: By, text: String): Action[Unit] =
-    findAnd(setText(_, text), by)
+    nested(
+      s"""Setting text to: "$text" in element: $by""",
+      findAnd(setText(_, text), by)
+    )
 
   def switchToFrame(e: Elem): Action[Unit] =
     fromSideEffectWithLog("Switching to frame:" + e.by, { d =>

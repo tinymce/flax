@@ -8,6 +8,8 @@ import api.elem.{Browser, Driver}
 import RunAsResult.runAsResult
 import org.specs2.execute.Result
 import org.specs2.specification.{BeforeAfterAll, BeforeAfterEach}
+
+import scala.util.control.NonFatal
 import scalaz.syntax.applicative._
 
 /**
@@ -76,7 +78,14 @@ private[flax] object FlaxSpec {
   def runBeforeAllAction[T](b: Browser, a: Action[T]): Unit =
     synchronized {
       if (driver.isEmpty) {
-        val d = driverForBrowser(b)
+        val d = try {
+          driverForBrowser(b)
+        } catch {
+          case NonFatal(e) =>
+            println("Could not load driver")
+            e.printStackTrace()
+            throw new RuntimeException(e)
+        }
         driver = Some(d)
       }
       driver.foreach(a.runOrThrow)
