@@ -23,9 +23,10 @@ Flax has a dependency on scalaz for its functional abstractions.
 Getting Started (template)
 --------------------------
 
-There is a giter8 template at [https://github.com/ephox/flax-template.g8]
+1. Download any browser drivers you need and ensure they're on your path. e.g.
+   - [geckodriver](https://github.com/mozilla/geckodriver/releases)
 
-To use:
+2. Use the giter8 template at [https://github.com/ephox/flax-template.g8]:
 
 ```
 sbt new ephox/flax-template.g8
@@ -35,10 +36,9 @@ sbt new ephox/flax-template.g8
 Getting Started (manually)
 --------------------------
 
-Assuming you're using sbt: 
 
-1. Download any browser drivers you need and ensure they're on your path. e.g.
-   - [geckodriver](https://github.com/mozilla/geckodriver/releases)
+1. Download browser drivers, as above.
+
 2. Add flax to your build.sbt file.
 
 ```scala
@@ -53,11 +53,6 @@ Assuming you're using sbt:
 
 5. Write tests
    `TODO`
-
-Examples
---------
-
-TODO
 
 
 Implementation Details
