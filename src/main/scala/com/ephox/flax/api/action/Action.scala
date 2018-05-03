@@ -6,14 +6,14 @@ import Action._
 import api.action.Log._
 import api.elem.Driver
 import PPrint._
-import com.ephox.flax.internal.{ActionBase, RT, WT}
+import com.ephox.flax.internal.ActionBase
 import org.openqa.selenium.support.ui.UnexpectedTagNameException
 
 import scala.util.control.NonFatal
 import scalaz._
 import scalaz.syntax.applicative._
 import scalaz.syntax.std.option.ToOptionOpsFromOption
-import scalaz.EitherT.eitherT
+import scalaz.EitherT._
 import scalaz.effect.IO
 
 
@@ -34,7 +34,6 @@ import scalaz.effect.IO
   * @param run the underlying computation
   * @tparam A type of the value resulting from this computation
   */
-
 final case class Action[A](run: ActionBase[A]) {
 
   def runOrThrow(d: Driver): A =
@@ -104,10 +103,10 @@ final case class Action[A](run: ActionBase[A]) {
     } yield ()
 
   def onlyIfSomeWithLog[B](noneMessage: String)(implicit ev: A =:= Option[B]): Action[B] =
-    flatMap[B] { a =>
+    flatMap { a =>
       ev(a) match {
-        case Some(z) => Action.point[B](z)
-        case None => Action.fromErr[B](Err.other(noneMessage))
+        case Some(z) => Action.point(z)
+        case None => Action.fromErr(Err.other(noneMessage))
       }
     }
 
@@ -122,13 +121,13 @@ final case class Action[A](run: ActionBase[A]) {
     } yield ()
 
   def mapEither[B](f: Err \/ A => Err \/ B): Action[B] =
-    Action(run.validationed(_.disjunctioned(f)))
+    fromWriterT(run.run map f)
 
   def attempt: Action[Err \/ A] =
-    mapEither[Err \/ A](x => \/-(x.fold(\/.left, \/.right)))
+    mapEither(x => \/-(x.fold(\/.left, \/.right)))
 
   def unattempt[B](implicit ev: A =:= (Err \/ B)): Action[B] =
-    flatMap(a => Action(EitherT.either(ev(a))))
+    flatMap(a => Action.fromDisjunction(ev(a)))
 
   def onFinish[B](action: Action[B]): Action[A] =
     (attempt <* action).unattempt
@@ -150,7 +149,7 @@ object Action {
 
   /** Action that succeeds with a specified value */
   def point[A](a: => A): Action[A] =
-    Applicative[Action].point(a)
+    Action.fromDisjunction(\/.right(a))
 
   /** Action that succeeds and logs a message */
   def log(s: String): Action[Unit] =
@@ -207,13 +206,13 @@ object Action {
   def fromDiowe[A](fn: Driver => IO[Writer[Log[String], Err ∨ A]]): Action[A] =
     fromDiope(d => fn(d).map(_.run))
 
-  def fromDiowe_[A](fn: => IO[Writer[Log[String], Err ∨ A]]): Action[A] =
+  def fromIowe[A](fn: => IO[Writer[Log[String], Err ∨ A]]): Action[A] =
     fromDiowe(_ => fn)
 
   def fromDiope[A](f: Driver => IO[(Log[String], Err ∨ A)]): Action[A] =
-    Action(EitherT[WT, Err, A](WriterT[RT, Log[String], Err ∨ A](ReaderT.apply(f))))
+    fromWriterT(WriterT(ReaderT.apply(f)))
 
-  def fromDiope_[A](f: IO[(Log[String], Err ∨ A)]): Action[A] =
+  def fromIope[A](f: IO[(Log[String], Err ∨ A)]): Action[A] =
     fromDiope(_ => f)
 
   /** Nest an action or set of actions, providing a log message for the set. */
@@ -225,10 +224,13 @@ object Action {
     fromDisjunction(b toRightDisjunction AssertionFailed("Expected Some, but was None"))
 
   def fromDisjunction[A](d: => Err ∨ A): Action[A] =
-    Action(EitherT.fromDisjunction(d))
+    fromWriter(Writer(Log.empty, d))
 
-  def fromWriterT[A](value: WriterT[RT, Log[String], Err ∨ A]) =
-    Action(eitherT[WT, Err, A](value))
+  def fromWriter[A](value: Writer[Log[String], Err ∨ A]): Action[A] =
+    Action.fromIowe(IO.apply(value))
+
+  def fromWriterT[A](value: WriterT[ReaderT[IO, Driver, ?], Log[String], Err ∨ A]) =
+    Action(eitherT(value))
 
   implicit def ActionInstances: Monad[Action] =
     new Monad[Action] {

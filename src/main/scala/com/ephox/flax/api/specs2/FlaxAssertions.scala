@@ -32,7 +32,7 @@ object FlaxAssertions {
 
   def assert[A](matchResult: => MatchResult[A]): Action[Unit] = {
     Action.fromSideEffect_(matchResult.toResult).flatMap { result =>
-      Action.fromDiowe_(IO {
+      Action.fromIowe(IO {
         val resultS: Log[String] = single[String](result.toString)
         val z = resultToEither(result).leftMap(x => Err.assertionFailed(x.message))
         Writer(resultS, z)

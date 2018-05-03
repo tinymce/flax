@@ -6,8 +6,5 @@ import scalaz.effect.IO
 import scalaz.{EitherT, ReaderT, WriterT}
 
 package object internal {
-
-  private[flax] type RT[A] = ReaderT[IO, Driver, A]
-  private[flax] type WT[A] = WriterT[RT, Log[String], A]
-  private[flax] type ActionBase[A] = EitherT[WT, Err, A]
+  private[flax] type ActionBase[A] = EitherT[WriterT[ReaderT[IO, Driver, ?], Log[String], ?], Err, A]
 }
