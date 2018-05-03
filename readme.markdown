@@ -20,8 +20,20 @@ Flax has a dependency on scalaz for its functional abstractions.
 [code](https://github.com/ephox/flax)
 
 
-Getting Started
----------------
+Getting Started (template)
+--------------------------
+
+There is a giter8 template at [https://github.com/ephox/flax-template.g8]
+
+To use:
+
+```
+sbt new ephox/flax-template.g8
+```
+
+
+Getting Started (manually)
+--------------------------
 
 Assuming you're using sbt: 
 
