@@ -8,9 +8,8 @@ import org.openqa.selenium._
   * Wrapper around [[WebElement]].
   */
 final case class Elem private(private[flax] val e: WebElement, by: By) {
-  private def zingo[T](s: String, effect: WebElement => T): Action[T] = {
+  private def zingo[T](s: String, effect: WebElement => T): Action[T] =
     Action.fromSideEffectWithLog(s + " element: " + by, _ => effect(e))
-  }
 
   def click(): Action[Unit] =
     zingo("Clicking", _.click())

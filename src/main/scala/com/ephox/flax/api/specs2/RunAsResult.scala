@@ -16,14 +16,14 @@ object RunAsResult {
   def runAsResult[T](a: Action[T], d: Driver): Result =
     a.run.run.run.run(d).unsafePerformIO() match {
       case (w, z) =>
-        val log = "\nSteps performed:\n" + w.pprint + "\n"
+        val log = "\nSteps performed:\n" + w.pprint + "\n!!! "
         z match {
-          case -\/(AssertionFailed(message)) => Failure("Assertion failed: " + message + log)
-          case -\/(CouldNotFindElement(by)) => Failure("Could not find element: " + by.toString + log)
-          case -\/(WrongElementType()) => Failure("Wrong element type" + log)
-          case -\/(Kersploded(e)) => Error(s"Test failed due to ${e.getClass.getSimpleName}\n" + log, e)
-          case -\/(Other(message)) => Failure(message + log)
-          case \/-(t) => Success(t.toString + log)
+          case -\/(AssertionFailed(message)) => Failure(log + "Assertion failed: " + message)
+          case -\/(CouldNotFindElement(by)) => Failure(log + "Could not find element: " + by.toString)
+          case -\/(WrongElementType()) => Failure(log + "Wrong element type")
+          case -\/(Kersploded(e)) => Error(log + s"Test failed due to ${e.getClass.getSimpleName}\n", e)
+          case -\/(Other(message)) => Failure(log + message)
+          case \/-(t) => Success(log + t.toString)
         }
     }
 }
