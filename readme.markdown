@@ -26,10 +26,10 @@ Getting Started (template)
 1. Download any browser drivers you need and ensure they're on your path. e.g.
    - [geckodriver](https://github.com/mozilla/geckodriver/releases)
 
-2. Use the giter8 template at [https://github.com/ephox/flax-template.g8]:
+2. Use the giter8 template at [https://github.com/tinymce/flax-template.g8]:
 
 ```
-sbt new ephox/flax-template.g8
+sbt new tinymce/flax-template.g8
 ```
 
 
